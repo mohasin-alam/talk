@@ -244,15 +244,7 @@ body::after {
 }
 .my-name-display { font-size:11px; color:var(--text-dim); margin-top:1px; }
 
-.topbar-share-btn {
-  width:34px; height:34px; border-radius:50%;
-  background:var(--cyan-dim); color:var(--cyan);
-  border:1px solid rgba(0,212,255,0.35); cursor:pointer;
-  font-size:15px; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; transition:all 0.15s;
-}
-.topbar-share-btn:hover { background:var(--cyan); color:#000; }
-.topbar-share-btn:active { transform:scale(0.93); }
+.conn-badge {
   display:flex; align-items:center; gap:5px; font-size:10px;
   font-family:'Syne Mono', monospace; padding:4px 8px;
   border-radius:20px; border:1px solid var(--border);
@@ -492,14 +484,12 @@ body::after {
 
 .attach-btn {
   width:38px; height:38px; border-radius:50%;
-  background:var(--purple-dim); color:var(--purple);
-  border:1px solid rgba(176,106,255,0.4); cursor:pointer;
-  font-size:17px; display:flex; align-items:center; justify-content:center;
+  background:transparent; color:var(--text-dim);
+  border:1px solid var(--border2); cursor:pointer;
+  font-size:16px; display:flex; align-items:center; justify-content:center;
   flex-shrink:0; transition:all 0.15s;
-  box-shadow: 0 0 8px rgba(176,106,255,0.2);
 }
-.attach-btn:hover { color:#fff; border-color:var(--purple); background:var(--purple); box-shadow:0 0 14px rgba(176,106,255,0.4); }
-.attach-btn:active { transform:scale(0.93); }
+.attach-btn:hover { color:var(--purple); border-color:var(--purple); background:var(--purple-dim); }
 
 .send-btn {
   width:38px; height:38px; border-radius:50%;
@@ -662,6 +652,91 @@ body::after {
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 
+
+/* ════════ FILES TAB ════════ */
+.files-tab-wrap {
+  display:flex; flex-direction:column; flex:1; overflow:hidden;
+  padding:14px 14px 0;
+  gap:12px;
+}
+
+.file-drop-zone {
+  border:2px dashed rgba(176,106,255,0.45);
+  border-radius:14px;
+  background: rgba(176,106,255,0.06);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:28px 16px; gap:8px; cursor:pointer; flex-shrink:0;
+  transition:all 0.2s;
+}
+.file-drop-zone:hover, .file-drop-zone.dragover {
+  border-color:var(--purple);
+  background:rgba(176,106,255,0.12);
+  box-shadow: 0 0 24px rgba(176,106,255,0.2);
+}
+.file-drop-icon { font-size:38px; line-height:1; }
+.file-drop-title { font-size:15px; font-weight:700; color:var(--purple); letter-spacing:0.5px; }
+.file-drop-sub { font-size:11px; color:var(--text-dim); font-family:'Syne Mono',monospace; letter-spacing:1px; text-align:center; }
+
+.file-send-progress {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:12px 14px; flex-shrink:0;
+}
+.file-send-progress-inner { display:flex; flex-direction:column; gap:6px; }
+.file-send-name { font-size:12px; color:var(--cyan); font-family:'Syne Mono',monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.file-send-bar-wrap { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.file-send-bar-fill { height:100%; width:0%; background:var(--purple); transition:width 0.2s; box-shadow:0 0 8px var(--purple); border-radius:2px; }
+.file-send-pct { font-size:10px; color:var(--text-dim); font-family:'Syne Mono',monospace; text-align:right; }
+
+.files-list-header {
+  font-size:10px; letter-spacing:3px; color:var(--purple);
+  text-transform:uppercase; font-family:'Syne Mono',monospace;
+  flex-shrink:0;
+}
+
+.files-list {
+  flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px;
+  padding-bottom:14px;
+  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+
+.files-empty {
+  text-align:center; color:var(--text-dim); font-size:12px;
+  font-family:'Syne Mono',monospace; letter-spacing:1px; padding:20px 0;
+}
+
+.file-item {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px;
+  display:flex; align-items:center; gap:12px;
+  animation:msgIn 0.2s ease;
+  flex-shrink:0;
+}
+.file-item.mine { border-color:rgba(176,106,255,0.3); background:rgba(176,106,255,0.06); }
+.file-item.theirs { border-color:rgba(0,212,255,0.2); }
+
+.file-item-icon { font-size:28px; flex-shrink:0; }
+.file-item-info { flex:1; min-width:0; }
+.file-item-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.file-item-meta { font-size:10px; color:var(--text-dim); font-family:'Syne Mono',monospace; margin-top:3px; }
+.file-item-sender { font-size:10px; margin-top:2px; }
+.file-item-sender.mine { color:var(--purple); }
+.file-item-sender.theirs { color:var(--cyan); }
+
+.file-dl-btn {
+  flex-shrink:0; padding:8px 14px; border-radius:20px; border:none;
+  background:var(--cyan); color:#000; font-family:'Syne',sans-serif;
+  font-size:11px; font-weight:700; cursor:pointer; letter-spacing:0.5px;
+  transition:all 0.15s; text-decoration:none; display:flex; align-items:center; gap:4px;
+  white-space:nowrap;
+}
+.file-dl-btn:active { transform:scale(0.94); }
+.file-item.mine .file-dl-btn { background:var(--purple); color:#fff; }
+
+.file-img-preview {
+  width:52px; height:52px; border-radius:8px;
+  object-fit:cover; border:1px solid var(--border); flex-shrink:0; cursor:pointer;
+}
+
 #file-input { display:none; }
 </style>
 </head>
@@ -746,7 +821,6 @@ body::after {
       <div class="room-id-display" id="room-display">ROOM: —</div>
       <div class="my-name-display" id="name-display">—</div>
     </div>
-    <button class="topbar-share-btn" onclick="shareRoom()" title="Share Room">🔗</button>
     <div class="conn-badge" id="conn-badge">
       <div class="dot"></div>
       <span id="conn-text">OFFLINE</span>
@@ -762,7 +836,7 @@ body::after {
   <div class="tabs">
     <div class="tab active" onclick="switchTab('voice', this)">📻 Voice</div>
     <div class="tab" onclick="switchTab('chat', this)">💬 Chat <span class="badge" id="chat-badge">0</span></div>
-    <div class="tab" onclick="switchTab('channels', this)">📺 Ch <span class="badge" id="ch-badge">0</span></div>
+    <div class="tab" onclick="switchTab('files', this)">📁 Files <span class="badge" id="files-badge">0</span></div>
     <div class="tab" onclick="switchTab('users', this)">👥 Users</div>
     <div class="tab" onclick="switchTab('info', this)">⚙</div>
   </div>
@@ -821,20 +895,35 @@ body::after {
     </div>
   </div>
 
-  <!-- ── CHANNELS TAB ── -->
-  <div class="tab-content" id="tab-channels">
-    <div style="padding:12px; gap:8px; overflow-y:auto; display:flex; flex-direction:column; flex:1;">
-      <div class="channel-section-title">▸ Active Channels</div>
-      <div id="channels-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  <!-- ── FILES TAB ── -->
+  <div class="tab-content" id="tab-files">
+    <div class="files-tab-wrap">
 
-      <div class="channel-section-title" style="margin-top:8px;">▸ Create New Channel</div>
-      <div class="new-channel-card">
-        <input type="text" id="new-ch-name" placeholder="Channel name (e.g. General, Team A)..." maxlength="20">
-        <input type="text" id="new-ch-emoji" placeholder="Emoji icon (e.g. 🔥, 🎮, 💼)..." maxlength="4" style="font-size:18px;">
-        <div class="btn-row">
-          <button class="btn btn-purple" onclick="createChannel()">✦ Create Channel</button>
+      <!-- Drop zone / picker -->
+      <div class="file-drop-zone" id="file-drop-zone" onclick="document.getElementById('file-input-tab').click()">
+        <div class="file-drop-icon">📁</div>
+        <div class="file-drop-title">Tap to pick a file</div>
+        <div class="file-drop-sub">image · pdf · doc · zip · video · any file up to 10MB</div>
+      </div>
+      <input type="file" id="file-input-tab" accept="*/*" onchange="handleFileTabSelect(event)" style="display:none;">
+
+      <!-- Send progress -->
+      <div class="file-send-progress" id="file-send-progress" style="display:none;">
+        <div class="file-send-progress-inner">
+          <div class="file-send-name" id="file-send-name">Sending...</div>
+          <div class="file-send-bar-wrap"><div class="file-send-bar-fill" id="file-send-fill"></div></div>
+          <div class="file-send-pct" id="file-send-pct">0%</div>
         </div>
       </div>
+
+      <!-- File list header -->
+      <div class="files-list-header">▸ Shared Files</div>
+
+      <!-- File list -->
+      <div class="files-list" id="files-list">
+        <div class="files-empty" id="files-empty">No files shared yet</div>
+      </div>
+
     </div>
   </div>
 
@@ -1152,12 +1241,10 @@ function handleDataConn(conn) {
 
 function handleData(data, fromPid) {
   if (data.type === 'hello') {
-    const alreadyKnown = peers[fromPid]?.name;
     if (!peers[fromPid]) peers[fromPid] = {};
     peers[fromPid].name = data.name;
     peers[fromPid].pid = fromPid;
-    // Reply with hello_ack (not hello) to avoid infinite ping-pong
-    peers[fromPid].conn?.send({ type: 'hello_ack', name: myName, channels: Object.keys(channels).map(id => ({
+    peers[fromPid].conn?.send({ type: 'hello', name: myName, channels: Object.keys(channels).map(id => ({
       id, name: channels[id].name, emoji: channels[id].emoji
     }))});
     if (data.channels) {
@@ -1168,29 +1255,7 @@ function handleData(data, fromPid) {
         }
       });
     }
-    // Only show "joined" if this peer wasn't already known (prevent duplicate on reconnect)
-    if (!alreadyKnown) {
-      addSysMsg(data.name + ' joined ✦', activeChannelId);
-    }
-    updatePeerPanel(); updateUsersTab();
-  }
-  else if (data.type === 'hello_ack') {
-    const alreadyKnown = peers[fromPid]?.name;
-    if (!peers[fromPid]) peers[fromPid] = {};
-    peers[fromPid].name = data.name;
-    peers[fromPid].pid = fromPid;
-    if (data.channels) {
-      data.channels.forEach(ch => {
-        if (!channels[ch.id]) {
-          channels[ch.id] = { name: ch.name, emoji: ch.emoji, messages: [], unread: 0 };
-          renderChannelBar(); renderChannelsList();
-        }
-      });
-    }
-    // hello_ack side: show joined only if not already known
-    if (!alreadyKnown) {
-      addSysMsg(data.name + ' joined ✦', activeChannelId);
-    }
+    addSysMsg(data.name + ' joined ✦', activeChannelId);
     updatePeerPanel(); updateUsersTab();
   }
   else if (data.type === 'chat') {
@@ -1200,6 +1265,10 @@ function handleData(data, fromPid) {
   else if (data.type === 'file') {
     const senderName = peers[fromPid]?.name || 'Unknown';
     addFileMsg(senderName, data, false, data.channelId || 'general');
+  }
+  else if (data.type === 'file_tab') {
+    const senderName = peers[fromPid]?.name || 'Unknown';
+    addSharedFile({ ...data, isMine: false, sender: senderName });
   }
   else if (data.type === 'talking') {
     const name = peers[fromPid]?.name || 'Someone';
@@ -1378,8 +1447,152 @@ function addSysMsg(text, channelId) {
 }
 
 // ══════════════════════════════════════════
-// FILE / IMAGE SHARE
+// FILE / IMAGE SHARE — Files Tab
 // ══════════════════════════════════════════
+let sharedFiles = [];   // { id, name, type, size, dataUrl, isImage, isMine, sender, time }
+let unreadFiles = 0;
+
+function handleFileTabSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  if (Object.keys(peers).length === 0) { showToast('কেউ connected নেই!'); return; }
+  const MAX_SIZE = 10 * 1024 * 1024;
+  if (file.size > MAX_SIZE) { showToast('File too large! Max 10MB'); return; }
+  const isImage = file.type.startsWith('image/');
+  showFileSendProgress(file.name, 0);
+  const reader = new FileReader();
+  reader.onprogress = (ev) => {
+    if (ev.lengthComputable) showFileSendProgress(file.name, ev.loaded / ev.total * 100);
+  };
+  reader.onload = (ev) => {
+    showFileSendProgress(file.name, 100);
+    setTimeout(hideFileSendProgress, 600);
+    const payload = {
+      type: 'file_tab', channelId: 'files',
+      fileName: file.name, fileType: file.type,
+      fileSize: file.size, isImage, dataUrl: ev.target.result
+    };
+    broadcast(payload);
+    addSharedFile({ ...payload, isMine: true, sender: myName });
+    showToast('File sent! ✦');
+  };
+  reader.onerror = () => { showToast('File read failed!'); hideFileSendProgress(); };
+  reader.readAsDataURL(file);
+}
+
+function addSharedFile(data) {
+  const entry = {
+    id: Date.now() + Math.random(),
+    name: data.fileName, type: data.fileType, size: data.fileSize,
+    dataUrl: data.dataUrl, isImage: data.isImage,
+    isMine: data.isMine, sender: data.sender,
+    time: Date.now()
+  };
+  sharedFiles.push(entry);
+
+  // Remove empty state
+  const empty = document.getElementById('files-empty');
+  if (empty) empty.remove();
+
+  renderFileItem(entry);
+
+  if (!data.isMine) {
+    // badge
+    const isFilesTabActive = document.getElementById('tab-files')?.classList.contains('active');
+    if (!isFilesTabActive) {
+      unreadFiles++;
+      updateFilesBadge();
+    }
+    showToast('📁 ' + data.sender + ' sent a file!');
+  }
+}
+
+function renderFileItem(entry) {
+  const list = document.getElementById('files-list');
+  const item = document.createElement('div');
+  item.className = 'file-item ' + (entry.isMine ? 'mine' : 'theirs');
+
+  const timeStr = new Date(entry.time).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  const sizeStr = formatFileSize(entry.size);
+  const icon = getFileIcon(entry.type, entry.name);
+
+  if (entry.isImage) {
+    item.innerHTML = `
+      <img class="file-img-preview" src="${entry.dataUrl}" alt="${escHtml(entry.name)}" onclick="openLightbox('${entry.dataUrl}')">
+      <div class="file-item-info">
+        <div class="file-item-name">${escHtml(entry.name)}</div>
+        <div class="file-item-meta">${sizeStr} · ${timeStr}</div>
+        <div class="file-item-sender ${entry.isMine ? 'mine' : 'theirs'}">${entry.isMine ? '▲ You sent' : '▼ ' + escHtml(entry.sender)}</div>
+      </div>
+      <a class="file-dl-btn" href="${entry.dataUrl}" download="${escHtml(entry.name)}">⬇ Save</a>
+    `;
+  } else {
+    item.innerHTML = `
+      <div class="file-item-icon">${icon}</div>
+      <div class="file-item-info">
+        <div class="file-item-name">${escHtml(entry.name)}</div>
+        <div class="file-item-meta">${sizeStr} · ${timeStr}</div>
+        <div class="file-item-sender ${entry.isMine ? 'mine' : 'theirs'}">${entry.isMine ? '▲ You sent' : '▼ ' + escHtml(entry.sender)}</div>
+      </div>
+      <a class="file-dl-btn" href="${entry.dataUrl}" download="${escHtml(entry.name)}">⬇ Save</a>
+    `;
+  }
+
+  list.appendChild(item);
+  list.scrollTop = list.scrollHeight;
+}
+
+function updateFilesBadge() {
+  const b = document.getElementById('files-badge');
+  if (!b) return;
+  if (unreadFiles > 0) { b.textContent = unreadFiles; b.classList.add('show'); }
+  else { b.classList.remove('show'); }
+}
+
+function showFileSendProgress(name, pct) {
+  const wrap = document.getElementById('file-send-progress');
+  if (!wrap) return;
+  wrap.style.display = 'block';
+  document.getElementById('file-send-name').textContent = name;
+  document.getElementById('file-send-fill').style.width = pct + '%';
+  document.getElementById('file-send-pct').textContent = Math.round(pct) + '%';
+}
+function hideFileSendProgress() {
+  const wrap = document.getElementById('file-send-progress');
+  if (wrap) wrap.style.display = 'none';
+}
+
+// Drag and drop on files tab
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('file-drop-zone');
+  if (!zone) return;
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault(); zone.classList.remove('dragover');
+    const file = e.dataTransfer?.files?.[0];
+    if (!file) return;
+    if (Object.keys(peers).length === 0) { showToast('কেউ connected নেই!'); return; }
+    const MAX_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_SIZE) { showToast('File too large! Max 10MB'); return; }
+    const isImage = file.type.startsWith('image/');
+    showFileSendProgress(file.name, 0);
+    const reader = new FileReader();
+    reader.onprogress = (ev) => { if (ev.lengthComputable) showFileSendProgress(file.name, ev.loaded / ev.total * 100); };
+    reader.onload = (ev) => {
+      showFileSendProgress(file.name, 100);
+      setTimeout(hideFileSendProgress, 600);
+      const payload = { type: 'file_tab', channelId: 'files', fileName: file.name, fileType: file.type, fileSize: file.size, isImage, dataUrl: ev.target.result };
+      broadcast(payload);
+      addSharedFile({ ...payload, isMine: true, sender: myName });
+      showToast('File sent! ✦');
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+// Legacy chat file share (kept for chat attach button)
 function handleFileSelect(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -1707,6 +1920,7 @@ function switchTab(name, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'chat') { unreadChat = 0; updateChatBadge(); }
+  if (name === 'files') { unreadFiles = 0; updateFilesBadge(); }
 }
 
 function updateChatBadge() {
@@ -1718,16 +1932,6 @@ function updateChatBadge() {
 function broadcast(data) {
   for (const pid in peers) {
     try { peers[pid].conn?.send(data); } catch(e) {}
-  }
-}
-
-function shareRoom() {
-  const url = window.location.origin + window.location.pathname + '?room=' + roomCode;
-  if (navigator.share) {
-    navigator.share({ title: 'TalkDrop Room: ' + roomCode, text: 'Join my TalkDrop room!', url })
-      .catch(() => {});
-  } else {
-    navigator.clipboard.writeText(url).then(() => showToast('Room link copied! 📋')).catch(() => showToast('Copy failed'));
   }
 }
 
