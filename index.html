@@ -244,7 +244,15 @@ body::after {
 }
 .my-name-display { font-size:11px; color:var(--text-dim); margin-top:1px; }
 
-.conn-badge {
+.topbar-share-btn {
+  width:34px; height:34px; border-radius:50%;
+  background:var(--cyan-dim); color:var(--cyan);
+  border:1px solid rgba(0,212,255,0.35); cursor:pointer;
+  font-size:15px; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all 0.15s;
+}
+.topbar-share-btn:hover { background:var(--cyan); color:#000; }
+.topbar-share-btn:active { transform:scale(0.93); }
   display:flex; align-items:center; gap:5px; font-size:10px;
   font-family:'Syne Mono', monospace; padding:4px 8px;
   border-radius:20px; border:1px solid var(--border);
@@ -484,12 +492,14 @@ body::after {
 
 .attach-btn {
   width:38px; height:38px; border-radius:50%;
-  background:transparent; color:var(--text-dim);
-  border:1px solid var(--border2); cursor:pointer;
-  font-size:16px; display:flex; align-items:center; justify-content:center;
+  background:var(--purple-dim); color:var(--purple);
+  border:1px solid rgba(176,106,255,0.4); cursor:pointer;
+  font-size:17px; display:flex; align-items:center; justify-content:center;
   flex-shrink:0; transition:all 0.15s;
+  box-shadow: 0 0 8px rgba(176,106,255,0.2);
 }
-.attach-btn:hover { color:var(--purple); border-color:var(--purple); background:var(--purple-dim); }
+.attach-btn:hover { color:#fff; border-color:var(--purple); background:var(--purple); box-shadow:0 0 14px rgba(176,106,255,0.4); }
+.attach-btn:active { transform:scale(0.93); }
 
 .send-btn {
   width:38px; height:38px; border-radius:50%;
@@ -736,6 +746,7 @@ body::after {
       <div class="room-id-display" id="room-display">ROOM: —</div>
       <div class="my-name-display" id="name-display">—</div>
     </div>
+    <button class="topbar-share-btn" onclick="shareRoom()" title="Share Room">🔗</button>
     <div class="conn-badge" id="conn-badge">
       <div class="dot"></div>
       <span id="conn-text">OFFLINE</span>
@@ -1141,10 +1152,12 @@ function handleDataConn(conn) {
 
 function handleData(data, fromPid) {
   if (data.type === 'hello') {
+    const alreadyKnown = peers[fromPid]?.name;
     if (!peers[fromPid]) peers[fromPid] = {};
     peers[fromPid].name = data.name;
     peers[fromPid].pid = fromPid;
-    peers[fromPid].conn?.send({ type: 'hello', name: myName, channels: Object.keys(channels).map(id => ({
+    // Reply with hello_ack (not hello) to avoid infinite ping-pong
+    peers[fromPid].conn?.send({ type: 'hello_ack', name: myName, channels: Object.keys(channels).map(id => ({
       id, name: channels[id].name, emoji: channels[id].emoji
     }))});
     if (data.channels) {
@@ -1155,7 +1168,29 @@ function handleData(data, fromPid) {
         }
       });
     }
-    addSysMsg(data.name + ' joined ✦', activeChannelId);
+    // Only show "joined" if this peer wasn't already known (prevent duplicate on reconnect)
+    if (!alreadyKnown) {
+      addSysMsg(data.name + ' joined ✦', activeChannelId);
+    }
+    updatePeerPanel(); updateUsersTab();
+  }
+  else if (data.type === 'hello_ack') {
+    const alreadyKnown = peers[fromPid]?.name;
+    if (!peers[fromPid]) peers[fromPid] = {};
+    peers[fromPid].name = data.name;
+    peers[fromPid].pid = fromPid;
+    if (data.channels) {
+      data.channels.forEach(ch => {
+        if (!channels[ch.id]) {
+          channels[ch.id] = { name: ch.name, emoji: ch.emoji, messages: [], unread: 0 };
+          renderChannelBar(); renderChannelsList();
+        }
+      });
+    }
+    // hello_ack side: show joined only if not already known
+    if (!alreadyKnown) {
+      addSysMsg(data.name + ' joined ✦', activeChannelId);
+    }
     updatePeerPanel(); updateUsersTab();
   }
   else if (data.type === 'chat') {
@@ -1683,6 +1718,16 @@ function updateChatBadge() {
 function broadcast(data) {
   for (const pid in peers) {
     try { peers[pid].conn?.send(data); } catch(e) {}
+  }
+}
+
+function shareRoom() {
+  const url = window.location.origin + window.location.pathname + '?room=' + roomCode;
+  if (navigator.share) {
+    navigator.share({ title: 'TalkDrop Room: ' + roomCode, text: 'Join my TalkDrop room!', url })
+      .catch(() => {});
+  } else {
+    navigator.clipboard.writeText(url).then(() => showToast('Room link copied! 📋')).catch(() => showToast('Copy failed'));
   }
 }
 
